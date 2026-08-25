@@ -26,7 +26,7 @@ const Onboarding3 = () => {
             {/* SWIPE ANIMATION */}
 
             <TouchableOpacity>
-                <Text>NEXT</Text>
+                <Text>Get started</Text>
             </TouchableOpacity>
         </SafeAreaView>
     )
