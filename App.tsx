@@ -21,9 +21,9 @@ const Tabs = createNativeBottomTabNavigator()
 const BottomTabs = () => {
   return (
     <Tabs.Navigator>
-      <Tabs.Screen name='HomePage' component={HomePage} />
+      {/* <Tabs.Screen name='HomePage' component={HomePage} />
       <Tabs.Screen name='Wishlist' component={Wishlist} />
-      <Tabs.Screen name='Cart' component={Cart} />
+      <Tabs.Screen name='Cart' component={Cart} /> */}
       {/* <Tabs.Screen name='unknown' component={unknown} /> */}
       <Tabs.Screen name='Profile' component={Profile} />
     </Tabs.Navigator>
