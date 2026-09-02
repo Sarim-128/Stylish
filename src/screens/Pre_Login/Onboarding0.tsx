@@ -3,7 +3,7 @@ import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import PrimaryButton from '../../components/PrimaryButton'
 
-const Onboarding0 = () => {
+const Onboarding0 = ({ navigation }: any) => {
     return (
         <SafeAreaView>
             <Image style={styles.coverPic} source={require('../../assets/images/Onboardings/cover.jpg')} />
@@ -13,6 +13,7 @@ const Onboarding0 = () => {
             <PrimaryButton
                 text='Get started'
                 buttonStyle={{ width: '70%' }}
+                onPress={() => navigation.navigate('Onboarding1')}
             />
         </SafeAreaView>
     )

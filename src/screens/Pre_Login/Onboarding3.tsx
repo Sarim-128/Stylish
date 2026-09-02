@@ -2,14 +2,14 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-const Onboarding3 = () => {
+const Onboarding3 = ({ navigation }: any) => {
     return (
         <SafeAreaView>
 
             <View>
                 <Text>3</Text>
                 <Text>/3</Text>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
                     <Text>Skip</Text>
                 </TouchableOpacity>
             </View>
@@ -19,13 +19,13 @@ const Onboarding3 = () => {
             <Text>Choose Products</Text>
             <Text>Paragraph</Text>
 
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('Onboarding2')}>
                 <Text>Prev</Text>
             </TouchableOpacity>
 
             {/* SWIPE ANIMATION */}
 
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
                 <Text>Get started</Text>
             </TouchableOpacity>
         </SafeAreaView>

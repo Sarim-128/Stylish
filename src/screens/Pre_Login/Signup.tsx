@@ -5,7 +5,15 @@ import MainInput from '../../components/MainInput'
 import PasswordInput from '../../components/PasswordInput'
 import PrimaryButton from '../../components/PrimaryButton'
 
-const Signup = () => {
+const Signup = ({ navigation }: any) => {
+
+    const handleSignUp = () => {
+        navigation.reset({
+            index: 0,
+            routes: [{ name: 'BottomTabs' }]
+        })
+    }
+
     return (
         <SafeAreaView>
             <Text>{`Create an\naccount`}</Text>
@@ -25,6 +33,7 @@ const Signup = () => {
             <PrimaryButton
                 text='Create Account'
                 buttonStyle={{ width: '80%' }}
+                onPress={handleSignUp}
             />
 
 
@@ -42,7 +51,7 @@ const Signup = () => {
 
             <View>
                 <Text>I already have an account</Text>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
                     <Text>Login</Text>
                 </TouchableOpacity>
             </View>

@@ -10,7 +10,7 @@ const banners = [
 ]
 
 const ITEM_WIDTH = 360
-const HomePage = () => {
+const HomePage = ({ navigation }: any) => {
     const [activeIndex, setActiveIndex] = useState(0)
 
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -33,8 +33,8 @@ const HomePage = () => {
                     <Text>Stylish</Text>
                 </View>
 
-                <TouchableOpacity>
-                    <Image style={styles.profilePicBtnIcon} />
+                <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+                    <Image source={require('../../assets/images/Home/banner2.jpg')} style={styles.profilePicBtnIcon} />
                 </TouchableOpacity>
             </View>
 
@@ -139,6 +139,11 @@ const styles = StyleSheet.create({
     menuBtnIcon: {
         height: 25,
         width: 25
+    },
+    profilePicBtnIcon: {
+        width: 40,
+        height: 40,
+        borderRadius: 20
     },
     filterIcons: {
         width: 25,

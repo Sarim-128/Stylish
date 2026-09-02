@@ -118,12 +118,12 @@ const App = () => {
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{ headerShown: false }}>
-          {/* <Stack.Screen name='Onboarding0' component={Onboarding0} />
+          <Stack.Screen name='Onboarding0' component={Onboarding0} />
           <Stack.Screen name='Onboarding1' component={Onboarding1} />
           <Stack.Screen name='Onboarding2' component={Onboarding2} />
           <Stack.Screen name='Onboarding3' component={Onboarding3} />
           <Stack.Screen name='Signin' component={Signin} />
-          <Stack.Screen name='Signup' component={Signup} /> */}
+          <Stack.Screen name='Signup' component={Signup} />
           <Stack.Screen name='BottomTabs' component={BottomTabs} />
         </Stack.Navigator>
       </NavigationContainer>
