@@ -1,4 +1,4 @@
-import { FlatList, Image, NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { FlatList, Image, NativeScrollEvent, NativeSyntheticEvent, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import MainInput from '../../components/MainInput'
@@ -20,17 +20,20 @@ const HomePage = ({ navigation }: any) => {
 
     }
     return (
+
         <SafeAreaView style={styles.container}>
 
+            <StatusBar  />
+
             {/* HEADER */}
-            <View>
-                <TouchableOpacity>
+            <View style={styles.headerContainer}>
+                <TouchableOpacity style={styles.menuBtnContainer}>
                     <Image style={styles.menuBtnIcon} source={require('../../assets/images/Home/menu.png')} />
                 </TouchableOpacity>
 
-                <View>
-                    <Image source={require('../../assets/images/Home/logo.png')} />
-                    <Text>Stylish</Text>
+                <View style={styles.logoContainer}>
+                    <Image style={styles.logo} source={require('../../assets/images/Home/logo.png')} />
+                    <Text style={styles.logoText}>Stylish</Text>
                 </View>
 
                 <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
@@ -41,7 +44,9 @@ const HomePage = ({ navigation }: any) => {
 
             {/* SEARCH BAR */}
             <MainInput
-                text='Search any product...'
+                placeholder='Search any product...'
+                source={require('../../assets/images/Home/search.png')}
+                containerStyle={{ marginTop: '10%', marginBottom: '8%' }}
             />
 
             <ScrollView>
@@ -49,51 +54,63 @@ const HomePage = ({ navigation }: any) => {
                 {/* CATEGORY SECTION */}
 
                 {/* SORTING & FILTER */}
-                <View>
-                    <Text>All Featured</Text>
-                    <TouchableOpacity>
-                        <Text>Sort</Text>
-                        <Image style={styles.filterIcons} source={require('../../assets/images/Home/sort.png')} />
-                    </TouchableOpacity>
+                <View style={styles.categoryHeader}>
+                    <Text style={styles.categoryHeaderTitle}>All Featured</Text>
 
-                    <TouchableOpacity>
-                        <Text>Filter</Text>
-                        <Image style={styles.filterIcons} source={require('../../assets/images/Home/filter.png')} />
-                    </TouchableOpacity>
+                    <View style={styles.categoryBtnsContainer}>
+                        <TouchableOpacity style={styles.sortContainer}>
+                            <Text style={styles.sortTitle}>Sort</Text>
+                            <Image style={styles.sortIcon} source={require('../../assets/images/Home/sort.png')} />
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.sortContainer}>
+                            <Text style={styles.sortTitle}>Filter</Text>
+                            <Image style={styles.sortIcon} source={require('../../assets/images/Home/filter.png')} />
+                        </TouchableOpacity>
+                    </View>
                 </View>
 
-                <View>
-                    <TouchableOpacity>
-                        <Image />
-                        <Text>Beauty</Text>
-                    </TouchableOpacity>
 
-                    <TouchableOpacity>
-                        <Image />
-                        <Text>Fashion</Text>
-                    </TouchableOpacity>
+                {/* SPECIFIC CATEGORIES */}
+                <View style={styles.specificCategoriesCard}>
+                    <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={styles.specificCategoriesScrollContent}
+                    >
 
-                    <TouchableOpacity>
-                        <Image />
-                        <Text>Kids</Text>
-                    </TouchableOpacity>
+                        <TouchableOpacity style={styles.SCContainer}>
+                            <Image style={styles.SCIcon} source={require('../../assets/images/Home/beauty.png')} />
+                            <Text style={styles.SCText}>Beauty</Text>
+                        </TouchableOpacity>
 
-                    <TouchableOpacity>
-                        <Image />
-                        <Text>Mens</Text>
-                    </TouchableOpacity>
+                        <TouchableOpacity style={styles.SCContainer}>
+                            <Image style={styles.SCIcon} source={require('../../assets/images/Home/fashion.jpg')} />
+                            <Text style={styles.SCText}>Fashion</Text>
+                        </TouchableOpacity>
 
-                    <TouchableOpacity>
-                        <Image />
-                        <Text>Womens</Text>
-                    </TouchableOpacity>
+                        <TouchableOpacity style={styles.SCContainer}>
+                            <Image style={styles.SCIcon} source={require('../../assets/images/Home/kids.jpg')} />
+                            <Text style={styles.SCText}>Kids</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.SCContainer}>
+                            <Image style={styles.SCIcon} source={require('../../assets/images/Home/mens.jpg')} />
+                            <Text style={styles.SCText}>Mens</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.SCContainer}>
+                            <Image style={styles.SCIcon} source={require('../../assets/images/Home/womens.png')} />
+                            <Text style={styles.SCText}>Womens</Text>
+                        </TouchableOpacity>
+                    </ScrollView>
                 </View>
 
 
 
                 {/* BANNERS */}
-                <View>
-                    <ScrollView style={styles.bannerContainer}
+                <View style={styles.bannerContainer}>
+                    <ScrollView style={styles.bannerScroll}
                         horizontal={true}
                         showsHorizontalScrollIndicator={false}
                         snapToInterval={360}
@@ -134,27 +151,128 @@ export default HomePage
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#FFFFFF'
+        padding: 15
+    },
+    headerContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+    },
+    menuBtnContainer: {
+        backgroundColor: '#e4e4e4',
+        borderRadius: 100,
+        width: 40,
+        height: 40,
+        justifyContent: 'center',
+        alignItems: 'center',
+
     },
     menuBtnIcon: {
         height: 25,
-        width: 25
+        width: 25,
+    },
+    logoContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 15
+    },
+    logo: {
+        width: 50,
+        height: 40,
+
+    },
+    logoText: {
+        fontSize: 16,
+        color: '#4392F9',
+        fontFamily: 'LibreCaslonText-Bold'
     },
     profilePicBtnIcon: {
         width: 40,
         height: 40,
-        borderRadius: 20
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: '#363636'
     },
-    filterIcons: {
-        width: 25,
-        height: 25,
+    categoryHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+    },
+    categoryHeaderTitle: {
+        fontFamily: 'Montserrat-SemiBold',
+        fontSize: 16,
+    },
+    categoryBtnsContainer: {
+        flexDirection: 'row',
+        gap: 10,
+
+    },
+    sortContainer: {
+        flexDirection: 'row',
+        backgroundColor: '#FFFFFF',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: 5,
+        padding: 2.5,
+        borderRadius: 5,
+        boxShadow: [
+            {
+                offsetX: 0,
+                offsetY: 3,
+                blurRadius: 4,
+                color: 'rgba(0,0,0,0.1)',
+            },
+        ],
+
+    },
+    sortTitle: {
+        fontSize: 12,
+        fontFamily: 'Montserrat-Regular',
+        textAlign: 'center',
+        margin: 2
+    },
+    sortIcon: {
+        width: 20,
+        height: 20,
+    },
+    specificCategoriesCard: {
+        marginVertical: 20,
+        backgroundColor: '#FFFFFF',
+        borderRadius: 10,
+        padding: 12,
+        elevation: 2,
+        boxShadow: [
+            {
+                offsetX: 0,
+                offsetY: 3,
+                blurRadius: 4,
+                color: 'rgba(0,0,0,0.1)',
+            },
+        ],
+    },
+    specificCategoriesScrollContent: {
+        alignItems: 'center',
+        gap: 15,
+    },
+    SCContainer: {
+        alignItems: 'center',
+    },
+    SCIcon: {
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+    },
+    SCText: {
+
     },
     bannerContainer: {
+        marginVertical: 20,
+
+    },
+    bannerScroll: {
         flexDirection: 'row',
         flex: 1,
     },
     bannerImg: {
-        width: 320,
+        width: 300,
         height: 180,
         borderRadius: 10,
         marginHorizontal: 20,
@@ -171,7 +289,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 8,
+        marginTop: 12,
     },
     dot: {
         height: 8,

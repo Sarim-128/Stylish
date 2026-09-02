@@ -56,6 +56,7 @@
 	<false/>
 	<key>UIAppFonts</key>
 	<array>
+		<string>LibreCaslonText-Bold.ttf</string>
 		<string>Montserrat-Bold.ttf</string>
 		<string>Montserrat-ExtraBold.ttf</string>
 		<string>Montserrat-Medium.ttf</string>

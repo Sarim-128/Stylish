@@ -2,6 +2,10 @@
   "migIndex": 1,
   "data": [
     {
+      "path": "src/assets/fonts/LibreCaslonText-Bold.ttf",
+      "sha1": "5f26f2b1814c5b6e7c96c9cf2c67252f647a3292"
+    },
+    {
       "path": "src/assets/fonts/Montserrat-Bold.ttf",
       "sha1": "be7c1438070ab637e11716915e4e50903726dcc8"
     },
