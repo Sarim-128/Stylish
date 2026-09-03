@@ -1,7 +1,11 @@
-import { FlatList, Image, NativeScrollEvent, NativeSyntheticEvent, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, FlatList, Image, NativeScrollEvent, NativeSyntheticEvent, RefreshControl, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import MainInput from '../../components/MainInput'
+import { useQuery } from '@tanstack/react-query'
+import { fetchProducts } from '../../Utils/handleApi'
+
+
 
 const banners = [
     require('../../assets/images/Home/banner1.jpg'),
@@ -10,6 +14,8 @@ const banners = [
 ]
 
 const ITEM_WIDTH = 360
+
+
 const HomePage = ({ navigation }: any) => {
     const [activeIndex, setActiveIndex] = useState(0)
 
@@ -17,13 +23,54 @@ const HomePage = ({ navigation }: any) => {
         const contentOffsetX = event.nativeEvent.contentOffset.x
         const currentIndex = Math.round(contentOffsetX / ITEM_WIDTH)
         setActiveIndex(currentIndex)
-
     }
+
+
+    // API HANDLING
+    const { data: products, isLoading, isError, error, refetch, isRefetching } = useQuery({
+        queryKey: ['products'],
+        queryFn: fetchProducts,
+        retry: false
+    })
+
+    if (isLoading) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size="large" color="#4392F9" />
+            </View>
+        );
+    }
+
+    if (isError) {
+        return (
+            <View style={styles.errorContainer}>
+                <Text style={styles.errorTxt}>
+                    {error instanceof Error ? error.message : 'An unexpected error occurred.'}
+                </Text>
+
+                <TouchableOpacity
+                    style={styles.errorBtnContainer}
+                    onPress={() => refetch()}
+                    disabled={isRefetching}
+                >
+                    {isRefetching ? (
+                        <ActivityIndicator size="large" color="#FFFFFF" />
+                    ) : (
+                        <Text style={styles.errorBtnTxt}>Retry</Text>
+                    )}
+                </TouchableOpacity>
+            </View>
+        );
+    }
+
+
+
+
     return (
 
         <SafeAreaView style={styles.container}>
 
-            <StatusBar  />
+            <StatusBar />
 
             {/* HEADER */}
             <View style={styles.headerContainer}>
@@ -49,7 +96,11 @@ const HomePage = ({ navigation }: any) => {
                 containerStyle={{ marginTop: '10%', marginBottom: '8%' }}
             />
 
-            <ScrollView>
+            <ScrollView
+                refreshControl={
+                    <RefreshControl refreshing={isRefetching} onRefresh={async () => { await refetch() }} />
+                }
+            >
 
                 {/* CATEGORY SECTION */}
 
@@ -108,6 +159,11 @@ const HomePage = ({ navigation }: any) => {
 
 
 
+
+
+
+
+
                 {/* BANNERS */}
                 <View style={styles.bannerContainer}>
                     <ScrollView style={styles.bannerScroll}
@@ -140,6 +196,18 @@ const HomePage = ({ navigation }: any) => {
 
 
                 {/* FEED */}
+                <FlatList
+                    scrollEnabled={false}
+                    data={products}
+                    numColumns={2}
+                    keyExtractor={(item: any) => item.id.toString()}
+                    renderItem={({ item }) => (
+                        <View>
+                            <Text>{item.title}</Text>
+                            <Text></Text>
+                        </View>
+                    )}
+                />
 
             </ScrollView>
         </SafeAreaView >
@@ -149,6 +217,32 @@ const HomePage = ({ navigation }: any) => {
 export default HomePage
 
 const styles = StyleSheet.create({
+    errorContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20
+    },
+    errorTxt: {
+        fontSize: 22,
+        fontFamily: 'Montserrat-SemiBold',
+        color: '#D8000C',
+        textAlign: 'center',
+        marginBottom: 16
+    },
+    errorBtnContainer: {
+        backgroundColor: '#4392F9',
+        paddingHorizontal: 24,
+        paddingVertical: 12,
+        borderRadius: 8,
+        alignItems: 'center',
+        minWidth: 120,
+    },
+    errorBtnTxt: {
+        color: '#FFFFFF',
+        fontWeight: 'bold',
+        fontSize: 16
+    },
     container: {
         flex: 1,
         padding: 15
@@ -265,7 +359,6 @@ const styles = StyleSheet.create({
     },
     bannerContainer: {
         marginVertical: 20,
-
     },
     bannerScroll: {
         flexDirection: 'row',

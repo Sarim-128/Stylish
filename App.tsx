@@ -16,6 +16,7 @@ import Profile from './src/screens/Post_Login/Profile'
 import Search from './src/screens/Post_Login/Search'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import CartButton from './src/components/CartButton'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 
 
@@ -107,25 +108,28 @@ const BottomTabs = () => {
 }
 
 
+const queryClient = new QueryClient()
 
 const Stack = createNativeStackNavigator()
 
 const App = () => {
   return (
-    <SafeAreaProvider>
-      <NavigationContainer>
-        <Stack.Navigator
-          screenOptions={{ headerShown: false }}>
-          {/* <Stack.Screen name='Onboarding0' component={Onboarding0} />
+    <QueryClientProvider client={queryClient}>
+      <SafeAreaProvider>
+        <NavigationContainer>
+          <Stack.Navigator
+            screenOptions={{ headerShown: false }}>
+            {/* <Stack.Screen name='Onboarding0' component={Onboarding0} />
           <Stack.Screen name='Onboarding1' component={Onboarding1} />
           <Stack.Screen name='Onboarding2' component={Onboarding2} />
           <Stack.Screen name='Onboarding3' component={Onboarding3} />
           <Stack.Screen name='Signin' component={Signin} />
           <Stack.Screen name='Signup' component={Signup} /> */}
-          <Stack.Screen name='BottomTabs' component={BottomTabs} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </SafeAreaProvider>
+            <Stack.Screen name='BottomTabs' component={BottomTabs} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </SafeAreaProvider>
+    </QueryClientProvider>
   )
 }
 
