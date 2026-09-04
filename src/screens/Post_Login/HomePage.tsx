@@ -1,9 +1,11 @@
 import { ActivityIndicator, FlatList, Image, Modal, NativeScrollEvent, NativeSyntheticEvent, RefreshControl, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import MainInput from '../../components/MainInput'
 import { useQuery } from '@tanstack/react-query'
 import { fetchProducts } from '../../Utils/handleApi'
+import FilterModal from '../../components/FilterModal'
+import SortModal, { SortType } from '../../components/SortModal'
 
 
 
@@ -17,7 +19,16 @@ const ITEM_WIDTH = 360
 
 
 const HomePage = ({ navigation }: any) => {
+
     const [activeIndex, setActiveIndex] = useState(0)
+    const [selectedCategory, setSelectedCategory] = useState('all')
+    const [isFilterModalVisible, setIsFilterModalVisible] = useState(false)
+    const [isSortModalVisible, setIsSortModalVisible] = useState(false)
+    const [sortOption, setSortOption] = useState<SortType>('default')
+
+
+
+
 
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
         const contentOffsetX = event.nativeEvent.contentOffset.x
@@ -26,12 +37,14 @@ const HomePage = ({ navigation }: any) => {
     }
 
 
+
     // API HANDLING
     const { data: products, isLoading, isError, error, refetch, isRefetching } = useQuery({
         queryKey: ['products'],
         queryFn: fetchProducts,
         retry: false
     })
+
 
     if (isLoading) {
         return (
@@ -63,21 +76,35 @@ const HomePage = ({ navigation }: any) => {
         );
     }
 
-    // HANDLE SORTING
-    const [selectedCategory, setSelectedCategory] = useState<string>('all')
+    // FILTER & SORT MODAL HANDLING
+    const processedProducts = useMemo(() => {
+        let list = [...products]
 
-    const categories = ['all', 'beauty', 'fragnances', 'furniture']
+        if (selectedCategory !== 'all') {
+            list = list.filter((p: any) => p.category?.toLowerCase() === selectedCategory.toLowerCase())
+        }
 
-    const filterProducts = selectedCategory === 'all' ? products
-        : products.filter((p: any) => p.category?.toLowerCase() === selectedCategory.toLowerCase())
+        switch (sortOption) {
+            case 'price-low':
+                return list.sort((a, b) => a.price - b.price)
+            case 'price-high':
+                return list.sort((a, b) => b.price - a.price)
+            case 'rating-high':
+                return list.sort((a, b) => (b.rating?.rate ?? b.rating ?? 0) - (a.rating?.rate ?? a.rating ?? 0))
+            case 'stock-high':
+                return list.sort((a, b) => b.stock - a.stock)
+            default:
+                return list
+        }
 
-    const [sortModalVisible, setSortModalVisible] = useState(false)
+    }, [products, selectedCategory, sortOption])
 
 
+    const quickCategories = ['all', 'beauty', 'fragrances', 'furniture']
 
     return (
 
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
 
             <StatusBar barStyle='dark-content' />
 
@@ -106,6 +133,7 @@ const HomePage = ({ navigation }: any) => {
             />
 
             <ScrollView
+                showsVerticalScrollIndicator={false}
                 refreshControl={
                     <RefreshControl refreshing={isRefetching} onRefresh={async () => { await refetch() }} />
                 }
@@ -120,18 +148,35 @@ const HomePage = ({ navigation }: any) => {
                     <View style={styles.categoryBtnsContainer}>
                         <TouchableOpacity
                             style={styles.sortContainer}
-                            onPress={() => setSortModalVisible(true)}
+                            onPress={() => setIsSortModalVisible(true)}
                         >
                             <Text style={styles.sortTitle}>Sort</Text>
                             <Image style={styles.sortIcon} source={require('../../assets/images/Home/sort.png')} />
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.sortContainer}>
+                        <TouchableOpacity
+                            style={styles.sortContainer}
+                            onPress={() => setIsFilterModalVisible(true)}
+                        >
                             <Text style={styles.sortTitle}>Filter</Text>
                             <Image style={styles.sortIcon} source={require('../../assets/images/Home/filter.png')} />
                         </TouchableOpacity>
                     </View>
                 </View>
+
+                <FilterModal
+                    visible={isFilterModalVisible}
+                    selectedCategory={selectedCategory}
+                    onClose={() => setIsFilterModalVisible(false)}
+                    onSelectedCategory={(category) => setSelectedCategory(category)}
+                />
+
+                <SortModal
+                    visible={isSortModalVisible}
+                    sortOption={sortOption}
+                    onClose={() => setIsSortModalVisible(false)}
+                    onSelectSortOption={(option) => setSortOption(option)}
+                />
 
 
                 {/* SPECIFIC CATEGORIES */}
@@ -139,17 +184,30 @@ const HomePage = ({ navigation }: any) => {
 
                 <View style={styles.specificCategoriesCard}>
 
-                    <TouchableOpacity style={styles.SCContainer}>
+                    <TouchableOpacity
+                        onPress={() => setSelectedCategory('all')}
+                        style={styles.SCContainer}>
+                        <Image style={styles.SCIcon} source={require('../../assets/images/Home/all.jpg')} />
+                        <Text style={styles.SCText}>All</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        onPress={() => setSelectedCategory('beauty')}
+                        style={styles.SCContainer}>
                         <Image style={styles.SCIcon} source={require('../../assets/images/Home/beauty.png')} />
                         <Text style={styles.SCText}>Beauty</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.SCContainer}>
+                    <TouchableOpacity
+                        onPress={() => setSelectedCategory('fragrances')}
+                        style={styles.SCContainer}>
                         <Image style={styles.SCIcon} source={require('../../assets/images/Home/fragnance.jpg')} />
-                        <Text style={styles.SCText}>Fragnance</Text>
+                        <Text style={styles.SCText}>Fragrance</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.SCContainer}>
+                    <TouchableOpacity
+                        onPress={() => setSelectedCategory('furniture')}
+                        style={styles.SCContainer}>
                         <Image style={styles.SCIcon} source={require('../../assets/images/Home/furniture.jpg')} />
                         <Text style={styles.SCText}>Furniture</Text>
                     </TouchableOpacity>
@@ -194,7 +252,7 @@ const HomePage = ({ navigation }: any) => {
                 {/* FEED */}
                 <FlatList
                     scrollEnabled={false}
-                    data={filterProducts}
+                    data={processedProducts}
                     numColumns={2}
                     keyExtractor={(item: any) => item.id.toString()}
                     columnWrapperStyle={styles.rowWrapper}
@@ -229,33 +287,7 @@ const HomePage = ({ navigation }: any) => {
             </ScrollView>
 
             {/* SORT MODAL */}
-            <Modal
-                visible={sortModalVisible}
-                transparent={true}
-                animationType='fade'
-                onRequestClose={() => setSortModalVisible(false)}
-            >
-                <TouchableOpacity
-                    style={styles.modalOverlay}
-                    activeOpacity={1}
-                    onPress={() => setSortModalVisible(false)}
-                >
-                    <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>  Select Category</Text>
-                        {categories.map((cat) => (
-                            <TouchableOpacity
-                                key={cat}
-                                style={[styles.modalOption, selectedCategory === cat && styles.modalOptionSelected]}
-                                onPress={() => { setSelectedCategory(cat); setSortModalVisible(false) }}
-                            >
-                                <Text>
-                                    {cat === 'all' ? 'All Products' : cat.charAt(0).toUpperCase() + cat.slice(1)}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-                </TouchableOpacity>
-            </Modal>
+
         </SafeAreaView >
     )
 }
@@ -291,7 +323,8 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        padding: 15
+        paddingHorizontal: 15,
+        paddingTop: 15,
     },
     headerContainer: {
         flexDirection: 'row',
@@ -353,14 +386,11 @@ const styles = StyleSheet.create({
         gap: 5,
         padding: 2.5,
         borderRadius: 5,
-        boxShadow: [
-            {
-                offsetX: 0,
-                offsetY: 3,
-                blurRadius: 4,
-                color: 'rgba(0,0,0,0.1)',
-            },
-        ],
+        elevation: 3, // For Android
+        shadowColor: '#000', // For iOS
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
 
     },
     sortTitle: {
@@ -374,7 +404,7 @@ const styles = StyleSheet.create({
         height: 20,
     },
     specificCategoriesCard: {
-        gap: 30,
+        gap: 25,
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
@@ -382,26 +412,22 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF',
         borderRadius: 10,
         padding: 8,
-        elevation: 2,
-        boxShadow: [
-            {
-                offsetX: 0,
-                offsetY: 3,
-                blurRadius: 4,
-                color: 'rgba(0,0,0,0.1)',
-            },
-        ],
+        elevation: 2, // For Android
+        shadowColor: '#000', // For iOS
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
     },
     SCContainer: {
         alignItems: 'center',
     },
     SCIcon: {
-        width: 60,
-        height: 60,
+        width: 50,
+        height: 50,
         borderRadius: 30,
     },
     SCText: {
-        fontSize: 12,
+        fontSize: 10,
         fontFamily: 'Montserrat-Regular'
     },
     bannerContainer: {
@@ -416,14 +442,11 @@ const styles = StyleSheet.create({
         height: 180,
         borderRadius: 10,
         marginHorizontal: 20,
-        boxShadow: [
-            {
-                offsetX: 0,
-                offsetY: 3,
-                blurRadius: 4,
-                color: 'rgba(0,0,0,0.1)',
-            },
-        ],
+        elevation: 3, // For Android
+        shadowColor: '#000', // For iOS
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
     },
     paginationContainer: {
         flexDirection: 'row',
@@ -529,43 +552,5 @@ const styles = StyleSheet.create({
         marginRight: 4,
     },
 
-    //MODAL STYLE
-    modalOverlay: {
-        flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    modalContent: {
-        backgroundColor: '#FFFFFF',
-        width: '80%',
-        borderRadius: 12,
-        padding: 20,
-    },
-    modalTitle: {
-        fontSize: 16,
-        fontFamily: 'Montserrat-SemiBold',
-        marginBottom: 12,
-        textAlign: 'center',
-    },
-    modalOption: {
-        paddingVertical: 10,
-        paddingHorizontal: 12,
-        borderRadius: 6,
-        marginVertical: 4,
-    },
-    modalOptionSelected: {
-        backgroundColor: '#EBF3FE',
-    },
-    modalOptionText: {
-        fontSize: 14,
-        fontFamily: 'Montserrat-Regular',
-        color: '#333',
-    },
-    modalOptionTextSelected: {
-        fontSize: 14,
-        fontFamily: 'Montserrat-SemiBold',
-        color: '#4392F9',
-    },
 
 })

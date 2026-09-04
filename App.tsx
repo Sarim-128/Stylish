@@ -1,6 +1,6 @@
 import { View, Text, Image } from 'react-native'
 import React from 'react'
-import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { SafeAreaProvider, useSafeAreaFrame, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import Onboarding0 from './src/screens/Pre_Login/Onboarding0'
 import { NavigationContainer } from '@react-navigation/native'
@@ -22,6 +22,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const Tabs = createBottomTabNavigator()
 const BottomTabs = () => {
+
+  const insets = useSafeAreaInsets()
   return (
     <Tabs.Navigator
       screenOptions={{
@@ -31,8 +33,10 @@ const BottomTabs = () => {
         tabBarShowLabel: true,
         tabBarStyle: {
           backgroundColor: "#FFFFFF",
-          height: '12.5%',
-          paddingBottom: 10,
+          height: 60 + insets.bottom,
+          paddingBottom: insets.bottom > 0 ? insets.bottom : 8,
+          borderTopWidth: 1,
+          borderTopColor: '#EFEFEF',
 
         },
         tabBarLabelStyle: {
