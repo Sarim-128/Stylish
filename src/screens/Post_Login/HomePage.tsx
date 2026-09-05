@@ -1,5 +1,5 @@
 import { ActivityIndicator, FlatList, Image, Modal, NativeScrollEvent, NativeSyntheticEvent, RefreshControl, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import MainInput from '../../components/MainInput'
 import { useQuery } from '@tanstack/react-query'
@@ -8,26 +8,76 @@ import FilterModal from '../../components/FilterModal'
 import SortModal, { SortType } from '../../components/SortModal'
 
 
-
 const banners = [
     require('../../assets/images/Home/banner1.jpg'),
     require('../../assets/images/Home/banner2.jpg'),
     require('../../assets/images/Home/banner3.jpg'),
 ]
 
-const ITEM_WIDTH = 360
+const ITEM_WIDTH = 340
 
 
 const HomePage = ({ navigation }: any) => {
+
 
     const [activeIndex, setActiveIndex] = useState(0)
     const [selectedCategory, setSelectedCategory] = useState('all')
     const [isFilterModalVisible, setIsFilterModalVisible] = useState(false)
     const [isSortModalVisible, setIsSortModalVisible] = useState(false)
     const [sortOption, setSortOption] = useState<SortType>('default')
+    const [search, setSearch] = useState('')
+    const [debounceSearch, setDebounceSearch] = useState('')
 
 
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebounceSearch(search)
+        }, 1500)
 
+        return () => clearTimeout(timer)
+    }, [search])
+
+
+    // API HANDLING
+    const { data: rawProducts, isFetching, isError, error, refetch, isRefetching } = useQuery({
+        queryKey: ['products', debounceSearch],
+        queryFn: () => fetchProducts(debounceSearch),
+        retry: false
+    })
+
+    const products = rawProducts ?? []
+
+    const processedProducts = useMemo(() => {
+
+        let list = Array.isArray(products) ? [...products] : [];
+
+
+        // Category filter
+        if (selectedCategory && selectedCategory !== 'all') {
+            list = list.filter((p: any) =>
+                p?.category?.toLowerCase() === selectedCategory.toLowerCase()
+            );
+        }
+
+        // Sorting
+        const sortedList = [...list];
+        switch (sortOption) {
+            case 'price-low':
+                return sortedList.sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
+            case 'price-high':
+                return sortedList.sort((a, b) => (b.price ?? 0) - (a.price ?? 0));
+            case 'rating-high':
+                return sortedList.sort((a, b) => {
+                    const rateA = a.rating?.rate ?? a.rating ?? 0;
+                    const rateB = b.rating?.rate ?? b.rating ?? 0;
+                    return rateB - rateA;
+                });
+            case 'stock-high':
+                return sortedList.sort((a, b) => (b.stock ?? 0) - (a.stock ?? 0));
+            default:
+                return sortedList;
+        }
+    }, [products, selectedCategory, sortOption,]);
 
 
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -36,30 +86,14 @@ const HomePage = ({ navigation }: any) => {
         setActiveIndex(currentIndex)
     }
 
-
-
-    // API HANDLING
-    const { data: products, isLoading, isError, error, refetch, isRefetching } = useQuery({
-        queryKey: ['products'],
-        queryFn: fetchProducts,
-        retry: false
-    })
-
-
-    if (isLoading) {
-        return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <ActivityIndicator size="large" color="#4392F9" />
-            </View>
-        );
-    }
-
     if (isError) {
         return (
             <View style={styles.errorContainer}>
                 <Text style={styles.errorTxt}>
                     {error instanceof Error ? error.message : 'An unexpected error occurred.'}
                 </Text>
+
+                
 
                 <TouchableOpacity
                     style={styles.errorBtnContainer}
@@ -76,33 +110,11 @@ const HomePage = ({ navigation }: any) => {
         );
     }
 
-    // FILTER & SORT MODAL HANDLING
-    const processedProducts = useMemo(() => {
-        let list = [...products]
-
-        if (selectedCategory !== 'all') {
-            list = list.filter((p: any) => p.category?.toLowerCase() === selectedCategory.toLowerCase())
-        }
-
-        switch (sortOption) {
-            case 'price-low':
-                return list.sort((a, b) => a.price - b.price)
-            case 'price-high':
-                return list.sort((a, b) => b.price - a.price)
-            case 'rating-high':
-                return list.sort((a, b) => (b.rating?.rate ?? b.rating ?? 0) - (a.rating?.rate ?? a.rating ?? 0))
-            case 'stock-high':
-                return list.sort((a, b) => b.stock - a.stock)
-            default:
-                return list
-        }
-
-    }, [products, selectedCategory, sortOption])
-
 
     const quickCategories = ['all', 'beauty', 'fragrances', 'furniture']
 
     return (
+
 
         <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
 
@@ -126,11 +138,17 @@ const HomePage = ({ navigation }: any) => {
 
 
             {/* SEARCH BAR */}
+
             <MainInput
+                value={search}
+                onChangeText={(text: any) => setSearch(text)}
                 placeholder='Search any product...'
                 source={require('../../assets/images/Home/search.png')}
-                containerStyle={{ marginTop: '10%', marginBottom: '8%' }}
+                containerStyle={{ marginVertical: 20, }}
             />
+
+
+
 
             <ScrollView
                 showsVerticalScrollIndicator={false}
@@ -223,7 +241,7 @@ const HomePage = ({ navigation }: any) => {
                     <ScrollView style={styles.bannerScroll}
                         horizontal={true}
                         showsHorizontalScrollIndicator={false}
-                        snapToInterval={360}
+                        snapToInterval={340}
                         decelerationRate='fast'
                         onScroll={handleScroll}
                         scrollEventThrottle={16}
@@ -248,45 +266,56 @@ const HomePage = ({ navigation }: any) => {
                 </View>
 
 
-
                 {/* FEED */}
-                <FlatList
-                    scrollEnabled={false}
-                    data={processedProducts}
-                    numColumns={2}
-                    keyExtractor={(item: any) => item.id.toString()}
-                    columnWrapperStyle={styles.rowWrapper}
-                    contentContainerStyle={styles.feedContainer}
+                <View>
+                    <FlatList
+                        scrollEnabled={false}
+                        data={processedProducts}
+                        numColumns={2}
+                        keyExtractor={(item: any) => item.id.toString()}
+                        columnWrapperStyle={styles.rowWrapper}
+                        contentContainerStyle={styles.feedContainer}
 
-                    renderItem={({ item }) => (
-                        <TouchableOpacity style={styles.cardWrapper}>
-                            <View style={styles.itemCard}>
-
-                                <View style={styles.imageContainer}>
-                                    <Image style={styles.itemImage} source={{ uri: item.images?.[0] }} />
-                                </View>
-
-                                <View style={styles.detailsContainer}>
-                                    <Text style={styles.itemTitle} numberOfLines={2}>{item.title}</Text>
-
-                                    <Text style={styles.itemPrice}>${item.price}</Text>
+                        renderItem={({ item }) => (
 
 
-                                    <View style={styles.ratingRow}>
-                                        <View style={styles.ratingBadge}>
-                                            <Text style={styles.ratingIcon}>★</Text>
-                                            <Text style={styles.ratingText}>{item.rating?.rate ?? item.rating ?? '4.5'}</Text>
+                            <TouchableOpacity style={styles.cardWrapper}>
+
+                                <View style={styles.itemCard}>
+
+                                    <View style={styles.imageContainer}>
+                                        <Image style={styles.itemImage} source={{ uri: item.images?.[0] }} />
+                                    </View>
+
+                                    <View style={styles.detailsContainer}>
+                                        <Text style={styles.itemTitle} numberOfLines={2}>{item.title}</Text>
+
+                                        <Text style={styles.itemPrice}>${item.price}</Text>
+
+
+                                        <View style={styles.ratingRow}>
+                                            <View style={styles.ratingBadge}>
+                                                <Text style={styles.ratingIcon}>★</Text>
+                                                <Text style={styles.ratingText}>{item.rating?.rate ?? item.rating ?? '4.5'}</Text>
+                                            </View>
+                                            <Text style={styles.stock}>Stock: {item.stock}</Text>
                                         </View>
-                                        <Text style={styles.stock}>Stock: {item.stock}</Text>
                                     </View>
                                 </View>
-                            </View>
-                        </TouchableOpacity>
-                    )}
-                />
+                            </TouchableOpacity>
+
+                        )}
+                    />
+
+                    {isFetching && <ActivityIndicator size='large' style={{ paddingRight: 10 }} color="black" />}
+
+
+
+
+                </View>
             </ScrollView>
 
-            {/* SORT MODAL */}
+
 
         </SafeAreaView >
     )

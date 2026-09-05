@@ -1,12 +1,17 @@
-import { Image, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Image, ImageSourcePropType, StyleSheet, Text, TextInput, View, ViewStyle } from 'react-native'
 import React from 'react'
 
-const MainInput = ({ placeholder, source, containerStyle }: any) => {
+
+
+const MainInput = ({ containerStyle, source, placeholder, value, onChangeText }: any) => {
     return (
         <View style={[styles.container, containerStyle]}>
             <View style={styles.inputBox}>
                 <Image style={styles.icon} source={source} />
-                <TextInput style={styles.input} placeholder={placeholder} placeholderTextColor='#BBBBBB' />
+                <TextInput
+                    value={value}
+                    onChangeText={onChangeText}
+                    style={styles.input} placeholder={placeholder} placeholderTextColor='#676767' />
             </View>
         </View>
     )
@@ -25,17 +30,15 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         gap: 10,
         backgroundColor: '#FFFFFF',
-        boxShadow: [
-            {
-                offsetX: 0,
-                offsetY: 3,
-                blurRadius: 4,
-                color: 'rgba(0,0,0,0.1)',
-            },
-        ],
+        elevation: 3,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
     },
     input: {
-
+        color: '#000',
+        flex: 1
     },
     icon: {
         width: 20,
