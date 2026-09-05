@@ -17,6 +17,7 @@ import Search from './src/screens/Post_Login/Search'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import CartButton from './src/components/CartButton'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import ItemDetails from './src/screens/Post_Login/ItemDetails'
 
 
 
@@ -130,6 +131,7 @@ const App = () => {
           <Stack.Screen name='Signin' component={Signin} />
           <Stack.Screen name='Signup' component={Signup} /> */}
             <Stack.Screen name='BottomTabs' component={BottomTabs} />
+            <Stack.Screen name='ItemDetails' component={ItemDetails} />
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaProvider>

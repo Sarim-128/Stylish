@@ -93,7 +93,7 @@ const HomePage = ({ navigation }: any) => {
                     {error instanceof Error ? error.message : 'An unexpected error occurred.'}
                 </Text>
 
-                
+
 
                 <TouchableOpacity
                     style={styles.errorBtnContainer}
@@ -146,9 +146,6 @@ const HomePage = ({ navigation }: any) => {
                 source={require('../../assets/images/Home/search.png')}
                 containerStyle={{ marginVertical: 20, }}
             />
-
-
-
 
             <ScrollView
                 showsVerticalScrollIndicator={false}
@@ -233,9 +230,6 @@ const HomePage = ({ navigation }: any) => {
                 </View>
 
 
-
-
-
                 {/* BANNERS */}
                 <View style={styles.bannerContainer}>
                     <ScrollView style={styles.bannerScroll}
@@ -279,7 +273,9 @@ const HomePage = ({ navigation }: any) => {
                         renderItem={({ item }) => (
 
 
-                            <TouchableOpacity style={styles.cardWrapper}>
+                            <TouchableOpacity style={styles.cardWrapper}
+                                onPress={() => navigation.navigate('ItemDetails', { item })}
+                            >
 
                                 <View style={styles.itemCard}>
 
