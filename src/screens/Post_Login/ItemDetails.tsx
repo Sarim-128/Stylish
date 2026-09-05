@@ -2,6 +2,7 @@ import { FlatList, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View }
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Rating from '../../components/Rating'
+import PrimaryButton from '../../components/PrimaryButton'
 
 
 
@@ -38,6 +39,10 @@ const ItemDetails = ({ route, navigation }: any) => {
                     <Text style={styles.stock}>Stock: {item.stock}</Text>
                 </View>
 
+                <PrimaryButton
+                    text='Add To Cart'
+                    buttonStyle={{ width: '80%' }}
+                />
 
                 <Text style={styles.descriptionTitle}>Product Details</Text>
                 <Text style={styles.description}>{item.description}</Text>
