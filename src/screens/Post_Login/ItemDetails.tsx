@@ -3,6 +3,7 @@ import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Rating from '../../components/Rating'
 import PrimaryButton from '../../components/PrimaryButton'
+import { useWishlistStore } from '../../Utils/useWishlistStore'
 
 
 
@@ -11,6 +12,22 @@ const ItemDetails = ({ route, navigation }: any) => {
 
 
     const { item } = route.params
+
+    const wishlist = useWishlistStore((state: any) => state.wishlist)
+    const addToWishlist = useWishlistStore((state: any) => state.addToWishlist)
+    const removeFromWishlist = useWishlistStore((state: any) => state.removeFromWishlist)
+
+    const isWishlisted = wishlist.some((i: any) => i.id === item.id)
+
+    const handleToggleWishlist = () => {
+        if (isWishlisted) {
+            removeFromWishlist(item.id)
+        } else {
+            addToWishlist(item)
+        }
+    }
+
+
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView showsHorizontalScrollIndicator={false}>
@@ -18,15 +35,17 @@ const ItemDetails = ({ route, navigation }: any) => {
 
                 {/* HEADER BUTTONS */}
                 <View style={styles.headerContainer}>
-                    <TouchableOpacity onPress={() => navigation.navigate('BottomTabs')}>
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
                         <Image style={styles.backIcon} source={require('../../assets/images/Home/back.png')} />
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.heartIconContainer}>
-                        <Image style={styles.heartIcon} source={require('../../assets/images/BottomTabs/heart.png')} />
+                    <TouchableOpacity onPress={handleToggleWishlist} style={styles.heartIconContainer}>
+                        <Image style={styles.heartIcon} source={isWishlisted ? require('../../assets/images/Home/heartFilled.png') : require('../../assets/images/Home/heart.png')} />
                     </TouchableOpacity>
                 </View>
 
+
+                {/* ITEM DETAILS */}
                 <View style={styles.itemImageContainer}>
                     <Image style={styles.itemImage} source={{ uri: item.images?.[0] }} />
                 </View>
@@ -52,8 +71,9 @@ const ItemDetails = ({ route, navigation }: any) => {
                 <Text >• Return Policy: {item.returnPolicy}</Text>
 
 
-                <Text style={styles.reviewTitle}>Reviews</Text>
+
                 {/* REVIEW CARD */}
+                <Text style={styles.reviewTitle}>Reviews</Text>
 
                 {item.reviews?.map((review: any, index: number) => (
                     <View key={index} style={styles.reviewCard}>
