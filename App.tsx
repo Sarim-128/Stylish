@@ -1,6 +1,6 @@
-import { View, Text, Image } from 'react-native'
+import { Image } from 'react-native'
 import React from 'react'
-import { SafeAreaProvider, useSafeAreaFrame, useSafeAreaInsets } from 'react-native-safe-area-context'
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import Onboarding0 from './src/screens/Pre_Login/Onboarding0'
 import { NavigationContainer } from '@react-navigation/native'
@@ -13,11 +13,11 @@ import HomePage from './src/screens/Post_Login/HomePage'
 import Wishlist from './src/screens/Post_Login/Wishlist'
 import Cart from './src/screens/Post_Login/Cart'
 import Profile from './src/screens/Post_Login/Profile'
-import Search from './src/screens/Post_Login/Search'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import CartButton from './src/components/CartButton'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import ItemDetails from './src/screens/Post_Login/ItemDetails'
+import Trend from './src/screens/Post_Login/Trend'
 
 
 
@@ -87,12 +87,12 @@ const BottomTabs = () => {
         }}
       />
 
-      <Tabs.Screen name='Search' component={Search}
+      <Tabs.Screen name='Trend' component={Trend}
         options={{
           tabBarIcon: ({ color, size }: any) => (
             <Image
-              source={require('./src/assets/images/BottomTabs/search.png')}
-              style={{ width: size, height: size, tintColor: color }}
+              source={require('./src/assets/images/BottomTabs/trend.png')}
+              style={{ width: 28, height: 28, marginLeft: 5, tintColor: color }}
             />
           )
         }}
