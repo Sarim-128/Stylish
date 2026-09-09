@@ -4,15 +4,15 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import Rating from '../../components/Rating'
 import PrimaryButton from '../../components/PrimaryButton'
 import { useWishlistStore } from '../../Utils/useWishlistStore'
+import { useCartStore } from '../../Utils/useCartStore'
 
 
 
 const ItemDetails = ({ route, navigation }: any) => {
 
-
-
     const { item } = route.params
 
+    // WISHLIST STORE
     const wishlist = useWishlistStore((state: any) => state.wishlist)
     const addToWishlist = useWishlistStore((state: any) => state.addToWishlist)
     const removeFromWishlist = useWishlistStore((state: any) => state.removeFromWishlist)
@@ -25,6 +25,16 @@ const ItemDetails = ({ route, navigation }: any) => {
         } else {
             addToWishlist(item)
         }
+    }
+
+
+    // CART STORE
+
+    const addToCart = useCartStore((state: any) => state.addToCart)
+
+
+    const handleAddToCart = () => {
+        addToCart(item)
     }
 
 
@@ -61,6 +71,7 @@ const ItemDetails = ({ route, navigation }: any) => {
                 <PrimaryButton
                     text='Add To Cart'
                     buttonStyle={{ width: '80%' }}
+                    onPress={handleAddToCart}
                 />
 
                 <Text style={styles.descriptionTitle}>Product Details</Text>
