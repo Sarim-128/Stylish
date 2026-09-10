@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import PrimaryButton from '../../components/PrimaryButton'
 import { ImageLibraryOptions, launchImageLibrary } from 'react-native-image-picker'
 import { storage } from '../../Utils/storage'
+import { useUserStore } from '../../Utils/useUserStore'
 
 
 const PROFILE_STORAGE_KEY = 'user_profile_data'
@@ -23,8 +24,9 @@ const Profile = ({ navigation }: any) => {
   const [accountName, setAccountName] = useState('Abhiay Sovatya')
   const [ifscCode, setIfscCode] = useState('SBIN00420')
 
-  // PROFILE IMAGE UPDATE
-  const [profileImageUri, setProfileImageUri] = useState<string | null>(null)
+  // PROFILE IMAGE UPDATE (USING ZUSTAND)
+  const profileImageUri = useUserStore((state: any) => state.profileImageUri)
+  const setProfileImageUri = useUserStore((state: any) => state.setProfileImageUri)
 
   const handleSelectImage = () => {
     const options: ImageLibraryOptions = {

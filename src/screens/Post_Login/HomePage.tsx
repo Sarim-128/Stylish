@@ -7,10 +7,13 @@ import { fetchProducts } from '../../Utils/handleApi'
 import FilterModal from '../../components/FilterModal'
 import SortModal, { SortType } from '../../components/SortModal'
 import Banner from '../../components/Banner'
+import { useUserStore } from '../../Utils/useUserStore'
 
 
 
 const HomePage = ({ navigation }: any) => {
+
+    const profileImageUri = useUserStore((state) => state.profileImageUri)
 
     const [selectedCategory, setSelectedCategory] = useState('all')
     const [isFilterModalVisible, setIsFilterModalVisible] = useState(false)
@@ -114,7 +117,7 @@ const HomePage = ({ navigation }: any) => {
                 </View>
 
                 <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-                    <Image source={require('../../assets/images/Home/banner2.jpg')} style={styles.profilePicBtnIcon} />
+                    <Image source={profileImageUri ? { uri: profileImageUri } : require('../../assets/images/Home/guest.png')} style={styles.profilePicBtnIcon} />
                 </TouchableOpacity>
             </View>
 
