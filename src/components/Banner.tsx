@@ -55,7 +55,7 @@ export default Banner
 
 const styles = StyleSheet.create({
     bannerContainer: {
-        marginVertical: 20,
+        marginVertical: 10,
     },
     bannerScroll: {
         flexDirection: 'row',

@@ -1,4 +1,4 @@
-import { Image } from 'react-native'
+import { Image, LayoutAnimation } from 'react-native'
 import React from 'react'
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
@@ -108,6 +108,8 @@ const BottomTabs = () => {
           )
         }}
       />
+
+
     </Tabs.Navigator>
   )
 }
@@ -123,15 +125,15 @@ const App = () => {
       <SafeAreaProvider>
         <NavigationContainer>
           <Stack.Navigator
-            screenOptions={{ headerShown: false }}>
-            {/* <Stack.Screen name='Onboarding0' component={Onboarding0} />
-          <Stack.Screen name='Onboarding1' component={Onboarding1} />
-          <Stack.Screen name='Onboarding2' component={Onboarding2} />
-          <Stack.Screen name='Onboarding3' component={Onboarding3} />
-          <Stack.Screen name='Signin' component={Signin} />
-          <Stack.Screen name='Signup' component={Signup} /> */}
-            <Stack.Screen name='BottomTabs' component={BottomTabs} />
-            <Stack.Screen name='ItemDetails' component={ItemDetails} />
+            screenOptions={{ headerShown: false, }}>
+            <Stack.Screen name='Onboarding0' component={Onboarding0} options={{ animation: 'fade_from_bottom' }} />
+            <Stack.Screen name='Onboarding1' component={Onboarding1} options={{ animation: 'slide_from_right' }} />
+            <Stack.Screen name='Onboarding2' component={Onboarding2} options={{ animation: 'slide_from_right' }} />
+            <Stack.Screen name='Onboarding3' component={Onboarding3} options={{ animation: 'slide_from_right' }} />
+            <Stack.Screen name='Signin' component={Signin} options={{ animation: 'fade_from_bottom' }} />
+            <Stack.Screen name='Signup' component={Signup} options={{ animation: 'fade_from_bottom' }} />
+            {/* <Stack.Screen name='BottomTabs' component={BottomTabs} />
+            <Stack.Screen name='ItemDetails' component={ItemDetails} /> */}
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaProvider>

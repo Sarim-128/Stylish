@@ -107,10 +107,6 @@ const HomePage = ({ navigation }: any) => {
 
             {/* HEADER */}
             <View style={styles.headerContainer}>
-                <TouchableOpacity style={styles.menuBtnContainer}>
-                    <Image style={styles.menuBtnIcon} source={require('../../assets/images/Home/menu.png')} />
-                </TouchableOpacity>
-
                 <View style={styles.logoContainer}>
                     <Image style={styles.logo} source={require('../../assets/images/Home/logo.png')} />
                     <Text style={styles.logoText}>Stylish</Text>
@@ -307,28 +303,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between'
     },
-    menuBtnContainer: {
-        backgroundColor: '#e4e4e4',
-        borderRadius: 100,
-        width: 40,
-        height: 40,
-        justifyContent: 'center',
-        alignItems: 'center',
-
-    },
-    menuBtnIcon: {
-        height: 25,
-        width: 25,
-    },
     logoContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 15
+        gap: 15,
     },
     logo: {
         width: 50,
         height: 40,
-
     },
     logoText: {
         fontSize: 16,
