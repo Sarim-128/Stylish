@@ -28,8 +28,10 @@ const styles = StyleSheet.create({
         borderRadius: 6,
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 10,
-        backgroundColor: '#FFFFFF',
+        gap: 5,
+        backgroundColor: '#F3F3F3',
+        borderWidth: 1,
+        borderColor: '#A8A8A9',
         elevation: 3,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 3 },
@@ -38,7 +40,8 @@ const styles = StyleSheet.create({
     },
     input: {
         color: '#000',
-        flex: 1
+        flex: 1,
+        fontFamily: 'Montserrat-Medium'
     },
     icon: {
         width: 20,

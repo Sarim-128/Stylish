@@ -7,7 +7,7 @@ import PrimaryButton from '../../components/PrimaryButton'
 
 const Signin = ({ navigation }: any) => {
 
-    const handleSignIn = () => {
+    const handleSignin = () => {
         navigation.reset({
             index: 0,
             routes: [{ name: 'BottomTabs' }]
@@ -15,43 +15,48 @@ const Signin = ({ navigation }: any) => {
     }
 
     return (
-        <SafeAreaView>
-            <Text>{`Welcome\nBack!`}</Text>
+        <SafeAreaView style={styles.container}>
+            <Text style={styles.title}>{`Welcome\nback!`}</Text>
 
             <MainInput
+                source={require('../../assets/images/Onboardings/mail.png')}
                 placeholder='Enter Email'
+                containerStyle={{ marginBottom: 20 }}
             />
 
             <PasswordInput
-                placeholder='Enter Password' />
+                placeholder='Enter Password'
+                containerStyle={{ marginBottom: 20 }}
+            />
 
-            <TouchableOpacity>
-                <Text>Forget Password?</Text>
+
+            <TouchableOpacity style={styles.forgotPassBtn}>
+                <Text style={styles.forgotPassText}>Forgot Password?</Text>
             </TouchableOpacity>
 
             <PrimaryButton
                 text='Login'
-                buttonStyle={{ width: '80%' }}
-                onPress={handleSignIn}
+                buttonStyle={{ width: '95%', marginVertical: 20, }}
+                onPress={handleSignin}
             />
 
 
-            <Text>- Or continue with -</Text>
+            <Text style={styles.continue}>- Or continue with -</Text>
 
-            <View>
-                <TouchableOpacity>
+            <View style={styles.socialContainer}>
+                <TouchableOpacity style={styles.socialBtns}>
                     <Image style={styles.socialIcon} source={require('../../assets/images/Register Screens/google.png')} />
                 </TouchableOpacity>
 
-                <TouchableOpacity>
+                <TouchableOpacity style={styles.socialBtns}>
                     <Image style={styles.socialIcon} source={require('../../assets/images/Register Screens/facebook.png')} />
                 </TouchableOpacity>
             </View>
 
-            <View>
-                <Text>Create an account</Text>
+            <View style={styles.footer}>
+                <Text style={styles.footerTxt}>Create an account</Text>
                 <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-                    <Text>Sign Up</Text>
+                    <Text style={styles.footerBtnTxt}>Sign Up</Text>
                 </TouchableOpacity>
             </View>
 
@@ -62,8 +67,67 @@ const Signin = ({ navigation }: any) => {
 export default Signin
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 20,
+        backgroundColor: '#FFFFFF'
+    },
+    title: {
+        fontFamily: 'Montserrat-ExtraBold',
+        fontSize: 30,
+        marginBottom: 25,
+    },
+    forgotPassBtn: {
+        alignSelf: 'flex-end',
+    },
+    forgotPassText: {
+        color: '#F83758',
+        fontFamily: 'Montserrat-Regular',
+        fontSize: 12,
+        marginTop: 10,
+        marginBottom: 20,
+    },
+    continue: {
+        fontFamily: 'Montserrat-Medium',
+        alignSelf: 'center',
+        marginBottom: 30,
+        marginTop: 10,
+        color: '#575757'
+    },
+    socialContainer: {
+        flexDirection: 'row',
+        alignSelf: 'center',
+        gap: 15,
+        marginVertical: 10,
+
+    },
+    socialBtns: {
+        backgroundColor: '#FCF3F6',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 1,
+        borderColor: '#F83758',
+        padding: 12,
+        borderRadius: 35,
+    },
     socialIcon: {
-        width: 50,
-        height: 50
-    }
+        width: 40,
+        height: 40
+    },
+    footer: {
+        flexDirection: 'row',
+        gap: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginVertical: 20,
+    },
+    footerTxt: {
+        fontFamily: 'Montserrat-SemiBold',
+        color: '#575757',
+    },
+    footerBtnTxt: {
+        color: '#F83758',
+        fontFamily: 'Montserrat-SemiBold',
+        textDecorationLine: 'underline',
+    },
 })

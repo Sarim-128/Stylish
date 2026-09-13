@@ -126,10 +126,10 @@ const App = () => {
         <NavigationContainer>
           <Stack.Navigator
             screenOptions={{ headerShown: false, }}>
-            <Stack.Screen name='Onboarding0' component={Onboarding0} options={{ animation: 'fade_from_bottom' }} />
+            {/* <Stack.Screen name='Onboarding0' component={Onboarding0} options={{ animation: 'fade_from_bottom' }} />
             <Stack.Screen name='Onboarding1' component={Onboarding1} options={{ animation: 'slide_from_right' }} />
             <Stack.Screen name='Onboarding2' component={Onboarding2} options={{ animation: 'slide_from_right' }} />
-            <Stack.Screen name='Onboarding3' component={Onboarding3} options={{ animation: 'slide_from_right' }} />
+            <Stack.Screen name='Onboarding3' component={Onboarding3} options={{ animation: 'slide_from_right' }} /> */}
             <Stack.Screen name='Signin' component={Signin} options={{ animation: 'fade_from_bottom' }} />
             <Stack.Screen name='Signup' component={Signup} options={{ animation: 'fade_from_bottom' }} />
             {/* <Stack.Screen name='BottomTabs' component={BottomTabs} />
