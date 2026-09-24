@@ -2,10 +2,21 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Slider from '../../components/Slider'
+import { useAppStore } from '../../Utils/useAppStore'
 
 const Onboarding2 = ({ navigation }: any) => {
+
+    const setHasSeenOnboarding = useAppStore((state) => state.setHasSeenOnboarding)
+
+    const handleFinish = () => {
+        setHasSeenOnboarding(true)
+        navigation.replace('Signin')
+    }
+
     return (
         <SafeAreaView style={styles.container}>
+
+            
 
             {/* HEADER */}
             <View style={styles.headerContainer}>
@@ -13,7 +24,7 @@ const Onboarding2 = ({ navigation }: any) => {
                     <Text style={styles.currentPage}>2</Text>
                     <Text style={styles.totalPages}>/3</Text>
                 </View>
-                <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
+                <TouchableOpacity onPress={handleFinish}>
                     <Text style={styles.skipText}>Skip</Text>
                 </TouchableOpacity>
             </View>

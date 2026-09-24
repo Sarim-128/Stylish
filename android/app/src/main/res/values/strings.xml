@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Stylish</string>
+    <string name="facebook_app_id">3001135290223750</string>
+<string name="facebook_client_token">9c2a516f720ef0c9bd9f3ed5bae0fdee</string>
 </resources>

@@ -321,8 +321,6 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40,
         borderRadius: 20,
-        borderWidth: 1,
-        borderColor: '#363636'
     },
     categoryHeader: {
         flexDirection: 'row',

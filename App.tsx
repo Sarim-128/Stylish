@@ -1,5 +1,5 @@
-import { Image, LayoutAnimation } from 'react-native'
-import React from 'react'
+import { ActivityIndicator, Image, LayoutAnimation, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import Onboarding0 from './src/screens/Pre_Login/Onboarding0'
@@ -18,6 +18,10 @@ import CartButton from './src/components/CartButton'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import ItemDetails from './src/screens/Post_Login/ItemDetails'
 import Trend from './src/screens/Post_Login/Trend'
+import { getAuth, onIdTokenChanged, User } from '@react-native-firebase/auth'
+import EmailVerification from './src/screens/Pre_Login/EmailVerification'
+import { useAppStore } from './src/Utils/useAppStore'
+import { useUserStore } from './src/Utils/useUserStore'
 
 
 
@@ -120,20 +124,76 @@ const queryClient = new QueryClient()
 const Stack = createNativeStackNavigator()
 
 const App = () => {
+
+  const [initializing, setInitializing] = useState(true)
+  const [user, setUser] = useState<User | null>(null)
+
+  const hasSeenOnboarding = useAppStore((state) => state.hasSeenOnboarding)
+
+  useEffect(() => {
+
+    const subscriber = onIdTokenChanged(getAuth(), (userState: any) => {
+      if (userState) {
+        setUser(userState)
+
+        useUserStore.setState({ profileImageUri: userState.photoURL })
+      } else {
+        setUser(null)
+        useUserStore.setState({ profileImageUri: null })
+      }
+
+      if (initializing) {
+        setInitializing(false)
+      }
+
+    })
+    return subscriber
+  }, [])
+
+  if (initializing) {
+    return (
+      <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+        <ActivityIndicator style={{ transform: [{ scaleX: 2 }, { scaleY: 2 }] }} size="large" color="#2563EB" />
+      </View>
+    )
+  }
+
+  const isFacebookLogin = user?.providerData.some(
+    (provider) => provider.providerId === 'facebook.com'
+  )
+
   return (
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
         <NavigationContainer>
           <Stack.Navigator
             screenOptions={{ headerShown: false, }}>
-            {/* <Stack.Screen name='Onboarding0' component={Onboarding0} options={{ animation: 'fade_from_bottom' }} />
-            <Stack.Screen name='Onboarding1' component={Onboarding1} options={{ animation: 'slide_from_right' }} />
-            <Stack.Screen name='Onboarding2' component={Onboarding2} options={{ animation: 'slide_from_right' }} />
-            <Stack.Screen name='Onboarding3' component={Onboarding3} options={{ animation: 'slide_from_right' }} /> */}
-            <Stack.Screen name='Signin' component={Signin} options={{ animation: 'fade_from_bottom' }} />
-            <Stack.Screen name='Signup' component={Signup} options={{ animation: 'fade_from_bottom' }} />
-            {/* <Stack.Screen name='BottomTabs' component={BottomTabs} />
-            <Stack.Screen name='ItemDetails' component={ItemDetails} /> */}
+
+            {user ? (
+              user.emailVerified || isFacebookLogin ? (
+                <Stack.Screen name='BottomTabs' component={BottomTabs} />
+              ) : (
+                <Stack.Screen name='EmailVerification' component={EmailVerification} />
+              )
+            ) : !hasSeenOnboarding ? (
+              <>
+                <Stack.Screen name='Onboarding0' component={Onboarding0} options={{ animation: 'fade_from_bottom' }} />
+                <Stack.Screen name='Onboarding1' component={Onboarding1} options={{ animation: 'slide_from_right' }} />
+                <Stack.Screen name='Onboarding2' component={Onboarding2} options={{ animation: 'slide_from_right' }} />
+                <Stack.Screen name='Onboarding3' component={Onboarding3} options={{ animation: 'slide_from_right' }} />
+                <Stack.Screen name='Signin' component={Signin} options={{ animation: 'fade_from_bottom' }} />
+                <Stack.Screen name='Signup' component={Signup} options={{ animation: 'fade_from_bottom' }} />
+              </>
+            ) : (
+              <>
+                <Stack.Screen name='Signin' component={Signin} options={{ animation: 'fade_from_bottom' }} />
+                <Stack.Screen name='Signup' component={Signup} options={{ animation: 'fade_from_bottom' }} />
+              </>
+            )
+            }
+
+            <Stack.Screen name='ItemDetails' component={ItemDetails} />
+
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaProvider>

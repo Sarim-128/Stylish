@@ -2,8 +2,17 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Slider from '../../components/Slider'
+import { useAppStore } from '../../Utils/useAppStore'
 
 const Onboarding3 = ({ navigation }: any) => {
+
+    const setHasSeenOnboarding = useAppStore((state) => state.setHasSeenOnboarding)
+
+    const handleFinish = () => {
+        setHasSeenOnboarding(true)
+        navigation.replace('Signin')
+    }
+
     return (
         <SafeAreaView style={styles.container}>
 
@@ -14,7 +23,7 @@ const Onboarding3 = ({ navigation }: any) => {
                     <Text style={styles.totalPages}>/3</Text>
                 </View>
 
-                <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
+                <TouchableOpacity onPress={handleFinish}>
                     <Text style={styles.skipText}>Skip</Text>
                 </TouchableOpacity>
             </View>
@@ -32,7 +41,7 @@ const Onboarding3 = ({ navigation }: any) => {
 
             {/* FOOTER */}
             <View style={styles.footer}>
-                <TouchableOpacity style={{width:'25%'}} onPress={() => navigation.navigate('Onboarding2')}>
+                <TouchableOpacity style={{ width: '25%' }} onPress={() => navigation.navigate('Onboarding2')}>
                     <Text style={styles.prevText}>Prev</Text>
                 </TouchableOpacity>
 
@@ -40,7 +49,7 @@ const Onboarding3 = ({ navigation }: any) => {
                     <Slider total={3} activeIndex={2} />
                 </View>
 
-                <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
+                <TouchableOpacity onPress={handleFinish}>
                     <Text style={styles.getStartedText}>Get started</Text>
                 </TouchableOpacity>
             </View>

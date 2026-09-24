@@ -5,11 +5,13 @@ import PrimaryButton from '../../components/PrimaryButton'
 import { ImageLibraryOptions, launchImageLibrary } from 'react-native-image-picker'
 import { storage } from '../../Utils/storage'
 import { useUserStore } from '../../Utils/useUserStore'
+import { GoogleSignin } from '@react-native-google-signin/google-signin'
+import { getAuth, signOut } from '@react-native-firebase/auth'
 
 
 const PROFILE_STORAGE_KEY = 'user_profile_data'
 
-const Profile = ({ navigation }: any) => {
+const Profile = () => {
 
 
   // Business Address Details
@@ -99,18 +101,38 @@ const Profile = ({ navigation }: any) => {
     }
   }
 
+  const handleLogout = async () => {
+    await GoogleSignin.signOut()
+    await signOut(getAuth())
+  }
+
+  // FOR DISPLAYING EMAIL, NAME & PROFILE PIC
+  const auth = getAuth()
+  const user = auth.currentUser
+
 
   return (
     <SafeAreaView edges={['left', 'right', 'top']} style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
 
-        <Text style={styles.headerTitle}>Profile</Text>
+        {/* HEADER */}
+        <View style={styles.headerContainer}>
+          <Text style={styles.headerTitle}>Profile</Text>
+
+          <TouchableOpacity onPress={handleLogout}>
+            <Image style={styles.logout} source={require('../../assets/images/Home/logout.png')} />
+          </TouchableOpacity>
+        </View>
 
         {/* PROFILE PIC */}
         <View style={styles.avatarContainer}>
           <View style={styles.avatarWrapper}>
-            <Image style={styles.avatarImage}
-              source={profileImageUri ? { uri: profileImageUri } : require('../../assets/images/Home/guest.png')} />
+
+            {user?.photoURL && (
+                <Image style={styles.avatarImage}
+                  source={user.photoURL ? { uri: user.photoURL } : require('../../assets/images/Home/guest.png')} />
+            )}
+
             <TouchableOpacity onPress={handleSelectImage} activeOpacity={0.7} style={styles.editBadge}>
               <Image style={styles.editIcon} source={require('../../assets/images/Home/edit.png')} />
             </TouchableOpacity>
@@ -121,19 +143,17 @@ const Profile = ({ navigation }: any) => {
         {/* PERSONAL DETAILS SECTION */}
         <Text style={styles.sectionTitle}>Personal Details</Text>
 
+        <Text style={styles.label}>Username</Text>
+        <View style={styles.box}>
+          <Text style={styles.boxText}>{user?.displayName}</Text>
+        </View>
+
         <Text style={styles.label}>Email Address</Text>
         <View style={styles.box}>
-          <Text style={styles.boxText}>Display From Auth</Text>
+          <Text style={styles.boxText}>{user?.email}</Text>
         </View>
 
-        <Text style={styles.label}>Password</Text>
-        <View style={styles.box}>
-          <Text style={styles.boxText}>Display From Auth</Text>
-        </View>
-
-        <TouchableOpacity style={styles.changePasswordContainer}>
-          <Text style={styles.changePasswordText}>Change Password</Text>
-        </TouchableOpacity>
+     
 
         {/* BUSINESS ADDRESS DETAILS */}
         <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Business Address Details</Text>
@@ -222,12 +242,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
   headerTitle: {
-    fontSize: 22,
+    fontSize: 26,
     fontFamily: 'Montserrat-Bold',
     color: '#000000',
-    alignSelf: 'center',
     marginVertical: 10,
+  },
+  logout: {
+    width: 25,
+    height: 25,
   },
   scrollContent: {
     paddingHorizontal: 20,
@@ -246,7 +274,7 @@ const styles = StyleSheet.create({
   avatarImage: {
     width: 90,
     height: 90,
-    borderRadius: 45,
+    borderRadius:45
   },
   editBadge: {
     position: 'absolute',
@@ -324,15 +352,6 @@ const styles = StyleSheet.create({
     height: 14,
     tintColor: '#666666',
     resizeMode: 'contain',
-  },
-  changePasswordContainer: {
-    alignSelf: 'flex-end',
-    marginTop: 8,
-  },
-  changePasswordText: {
-    fontSize: 12,
-    fontFamily: 'Montserrat-Medium',
-    color: '#FA7181',
   },
   saveButton: {
     backgroundColor: '#F83758',

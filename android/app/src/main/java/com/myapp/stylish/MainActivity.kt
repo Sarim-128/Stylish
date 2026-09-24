@@ -1,4 +1,4 @@
-package com.stylish
+package com.myapp.stylish
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
