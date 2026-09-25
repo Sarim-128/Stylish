@@ -76,3 +76,5 @@ yarn-error.log
 
 
 .env
+installed.apk
+*.apk
