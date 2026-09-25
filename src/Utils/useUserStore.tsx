@@ -7,6 +7,7 @@ import { mmkvStorage } from "./storage"
 interface UserState {
     profileImageUri: string | null
     setProfileImageUri: (uri: string | null) => void
+    clearProfile: () => void
 }
 
 export const useUserStore = create<UserState>()(
@@ -14,8 +15,12 @@ export const useUserStore = create<UserState>()(
         (set) => ({
             profileImageUri: null,
 
-            setProfileImageUri: (uri) => set({ profileImageUri: uri })
+            setProfileImageUri: (uri) => set({ profileImageUri: uri }),
+
+            clearProfile: () => set({ profileImageUri: null })
         }),
+
+
 
         {
             name: 'user-storage',

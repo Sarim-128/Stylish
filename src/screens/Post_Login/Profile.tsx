@@ -29,6 +29,7 @@ const Profile = () => {
   // PROFILE IMAGE UPDATE (USING ZUSTAND)
   const profileImageUri = useUserStore((state: any) => state.profileImageUri)
   const setProfileImageUri = useUserStore((state: any) => state.setProfileImageUri)
+  const clearProfilePic = useUserStore((state: any) => state.clearProfile)
 
   const handleSelectImage = () => {
     const options: ImageLibraryOptions = {
@@ -51,12 +52,20 @@ const Profile = () => {
         const selectedImage = response.assets[0].uri
         if (selectedImage) {
           setProfileImageUri(selectedImage)
+
+          const exsistingData = storage.getString(PROFILE_STORAGE_KEY)
+          let parsedData = exsistingData ? JSON.parse(exsistingData) : {}
+          parsedData.profileImageUri = selectedImage
+          storage.set(PROFILE_STORAGE_KEY, JSON.stringify(parsedData))
         }
       }
     })
 
   }
 
+  // FOR DISPLAYING EMAIL, NAME & PROFILE PIC
+  const auth = getAuth()
+  const user = auth.currentUser
 
   // SAVING DATA TO STORAGE
   useEffect(() => {
@@ -72,12 +81,24 @@ const Profile = () => {
         if (parsed.accountNumber) setAccountNumber(parsed.accountNumber)
         if (parsed.accountName) setAccountName(parsed.accountName)
         if (parsed.ifscCode) setIfscCode(parsed.ifscCode)
-        if (parsed.profileImageUri) setProfileImageUri(parsed.profileImageUri)
+
+        if (!profileImageUri && user?.photoURL) {
+          setProfileImageUri(user.photoURL)
+        }
+
+        if (parsed.profileImageUri) {
+          setProfileImageUri(parsed.profileImageUri)
+        } else if (user?.photoURL) {
+          setProfileImageUri(user.photoURL)
+        }
       } catch (error) {
         console.error('Failed to load profile data from MMKV', error)
       }
+
+    } else if (user?.photoURL) {
+      setProfileImageUri(user.photoURL)
     }
-  }, [])
+  }, [user])
 
 
   const handleSaveProfile = () => {
@@ -102,13 +123,16 @@ const Profile = () => {
   }
 
   const handleLogout = async () => {
+
+    clearProfilePic()
+
+    storage.remove(PROFILE_STORAGE_KEY)
+
     await GoogleSignin.signOut()
     await signOut(getAuth())
   }
 
-  // FOR DISPLAYING EMAIL, NAME & PROFILE PIC
-  const auth = getAuth()
-  const user = auth.currentUser
+
 
 
   return (
@@ -128,10 +152,15 @@ const Profile = () => {
         <View style={styles.avatarContainer}>
           <View style={styles.avatarWrapper}>
 
-            {user?.photoURL && (
-                <Image style={styles.avatarImage}
-                  source={user.photoURL ? { uri: user.photoURL } : require('../../assets/images/Home/guest.png')} />
-            )}
+
+
+            <Image style={styles.avatarImage}
+              source={
+                profileImageUri ? { uri: profileImageUri } : user?.photoURL ? { uri: user.photoURL } : require('../../assets/images/Home/guest.png')
+              }
+            />
+
+
 
             <TouchableOpacity onPress={handleSelectImage} activeOpacity={0.7} style={styles.editBadge}>
               <Image style={styles.editIcon} source={require('../../assets/images/Home/edit.png')} />
@@ -153,7 +182,7 @@ const Profile = () => {
           <Text style={styles.boxText}>{user?.email}</Text>
         </View>
 
-     
+
 
         {/* BUSINESS ADDRESS DETAILS */}
         <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Business Address Details</Text>
@@ -274,7 +303,7 @@ const styles = StyleSheet.create({
   avatarImage: {
     width: 90,
     height: 90,
-    borderRadius:45
+    borderRadius: 45
   },
   editBadge: {
     position: 'absolute',
